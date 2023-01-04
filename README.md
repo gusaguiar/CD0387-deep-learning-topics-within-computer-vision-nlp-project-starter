@@ -21,8 +21,6 @@ The dog breed classification dataset is a dataset used for training machine lear
 
 The dog breed classification dataset is often used for a variety of purposes, such as research, education, and product development. For example, researchers may use the dataset to study the features and patterns that are characteristic of different dog breeds, or to develop machine learning algorithms that can accurately classify dog breeds. Educators may use the dataset to teach students about machine learning and image classification, or to build hands-on projects that demonstrate the capabilities of machine learning. Product developers may use the dataset to build applications or systems that can classify dog breeds, such as a web or mobile app that can identify the breed of a dog based on a user-provided image.
 
-Overall, the dog breed classification dataset is an important resource for anyone interested in machine learning, image classification, or the classification of animals. It provides a rich and diverse set of data that can be used to train and evaluate machine learning models, and can help researchers, educators, and product developers develop new and innovative solutions to real-world problems.
-
 ## Hyperparameter Tuning
 
 Choosing a pre-trained Resnet18 model and using transfer learning to train the model on a specific dataset (such as the dog breed classification dataset) is a good choice because it allows you to leverage the knowledge and capabilities of a well-known and widely-used model, while still being able to fine-tune the model to the specific characteristics and patterns of the dataset. This can help you achieve good results more quickly and with less data, and is a common approach in many machine learning applications. There are several reasons why choosing a pre-trained Resnet18 model and using transfer learning to train the model on a specific dataset (such as the dog breed classification dataset) might be a good choice for classifying dog breeds:
@@ -41,11 +39,18 @@ To further optimize the performance of the model, we used Sagemaker's hyperparam
 
 - Using the Sagemaker Tuner to select the best combination of hyperparameters based on the results of the training jobs
 
-Remember that your README should:
-- Include a screenshot of completed training jobs
-- Logs metrics during the training process
-- Tune at least two hyperparameters
-- Retrieve the best best hyperparameters from all your training jobs
+Optimized for the learning rate, batch size and the number of epochs to use. For the learning rate, a linear search space (0.001, 0.1). For the batch size, a categorical search space of (16,32,64,128,256). For the epochs, an integer interval (2,4)
+
+Hyperparameter Tuning Job
+
+![hyperparameters_tuning.jpeg](images/hyperparameters_tuning.jpeg)
+
+Completed Tranining Job for the model with best hyperparameter combination.
+
+![training_job.jpeg](images/training_job.jpeg)
+
+![training_job_log.jpeg](images/training_job_log.jpeg)
+
 
 ## Debugging and Profiling
 
@@ -66,23 +71,56 @@ To perform and evaluate the results of model debugging and profiling in Sagemake
 
 5. Evaluate the results of the debugging and profiling by comparing the performance of the model before and after the debugging and profiling process. You can do this by measuring metrics such as accuracy, precision, and recall, and comparing these metrics to determine whether the debugging and profiling process has improved the model's performance.
 
-### Results
-**TODO**: What are the results/insights did you get by profiling/debugging your model?
+To perform debugging using Sagemaker Debugger, used the following steps.
+- Added hooks for the debugger and the profiler in the train() and test() functions and set them to their respective modes.
+- In the main() function created the hook and registered the model to the hook. This hook is passed to the train() and test() functions.
+- In the notebook, configured the debugger rules and the hook parameters.
 
-**TODO** Remember to provide the profiler html/pdf file in your submission.
+For the profiler, used the following steps.
+- Created profiler rules and config.
+
+
+### Results
+
+![training_job_metrics.jpeg](images/training_job_metrics.jpeg)
+
+![loss.jpeg](images/loss.jpeg)
+
 
 ## Model Deployment
 
 Once the model was trained and optimized, we deployed it to a Sagemaker endpoint for real-time inference. The endpoint can be used to classify new images and make predictions about dogs breeds.
 
-**TODO**: Give an overview of the deployed model and instructions on how to query the endpoint with a sample input.
+To query the endpoint of an image classification trained model on AWS Sagemaker with a sample input, you can follow these steps:
 
-**TODO** Remember to provide a screenshot of the deployed active endpoint in Sagemaker.
+1. Install the AWS SDK for Python (Boto3). You can do this by running the following command:
+
+2. Import the necessary modules and create a client for the SageMaker runtime service. To do this, you will need to provide your AWS access key and secret access key.
+                      
+3. Set the name of the endpoint that you want to query and the input data that you want to send to the endpoint. The input data should be a byte array that contains the image data, encoded in a format such as JPEG or PNG.
+
+`endpoint_name = '<endpoint_name>'
+
+with open('<image_path>', 'rb') as f:
+    input_data = f.read()`
+    
+4. Call the invoke_endpoint method of the client, passing in the endpoint name and the input data. This will send the input data to the endpoint and return the model's prediction as a response.
+
+`response = client.invoke_endpoint(EndpointName=endpoint_name,
+                                  ContentType='application/x-image',
+                                  Body=input_data)`
+                                  
+5. Extract the model's prediction from the response. The prediction will be returned as a JSON object in the 'Body' field of the response.
+
+`prediction = response['Body'].read()`
+
+![model_deploy.jpeg](images/model_deploy.jpeg)
+
 
 ## Standout Suggestions
 
 ### Package the model as a Docker Container
-To package a model trained on AWS Sagemaker as a Docker container, you can follow these steps:
+ packaging a model trained on AWS Sagemaker as a Docker container is a good way to make the model portable and easy to deploy to a variety of environments. By following these steps, you can create a Docker image that contains the model and all of the necessary dependencies, and then deploy the image to a production server or Kubernetes cluster for real-time inference.
 
 1. Install Docker on your local machine. You can download Docker from the official website (https://www.docker.com/) and follow the instructions to install it.
 
@@ -100,12 +138,10 @@ To package a model trained on AWS Sagemaker as a Docker container, you can follo
 
 6. To deploy the Docker image to a production server or Kubernetes cluster, you can use a tool like Docker Compose or Helm to manage the deployment process. This will allow you to easily scale the deployment and manage the underlying infrastructure.
 
-Overall, packaging a model trained on AWS Sagemaker as a Docker container is a good way to make the model portable and easy to deploy to a variety of environments. By following these steps, you can create a Docker image that contains the model and all of the necessary dependencies, and then deploy the image to a production server or Kubernetes cluster for real-time inference.
-
 
 ### Batch Transform
 
-To create a batch transform that performs inference on the whole test set using a model that you trained on AWS Sagemaker, you can follow these steps:
+Creating a batch transform that performs inference on the whole test set using a model that you trained on AWS Sagemaker is a good way to quickly and efficiently perform inference on large datasets. By following these steps, you can use the AWS Sagemaker Python SDK to create and manage batch transform jobs, and monitor their progress as they run.
 
 1. Create an S3 bucket to store the test set and the output of the batch transform. You can do this using the AWS Management Console or the AWS CLI.
 2. Upload the test set to the S3 bucket. You can do this using the AWS Management Console or the AWS CLI.
@@ -118,11 +154,9 @@ To create a batch transform that performs inference on the whole test set using 
 9. Start the batch transform job using the AWS Sagemaker Python SDK. This will initiate the batch transform process and perform inference on the whole test set using the specified model.
 10. Monitor the progress of the batch transform job using the AWS Sagemaker Python SDK or the AWS Management Console. You can check the status of the job and view the output of the batch transform as it becomes available.
 
-Overall, creating a batch transform that performs inference on the whole test set using a model that you trained on AWS Sagemaker is a good way to quickly and efficiently perform inference on large datasets. By following these steps, you can use the AWS Sagemaker Python SDK to create and manage batch transform jobs, and monitor their progress as they run.
-
 ### Model Explainability
 
-Amazon Sagemaker Clarity is a tool that can be used to make machine learning models trained on AWS Sagemaker more interpretable. To use Amazon Sagemaker Clarity to make a model more interpretable, you can follow these steps:
+Using Amazon Sagemaker Clarity is a good way to make a machine learning model trained on AWS Sagemaker more interpretable. By following these steps, you can use the Amazon Sagemaker Clarity library to generate explanations for the model's predictions and visualize the contributions of different features to those predictions. To use Amazon Sagemaker Clarity to make a model more interpretable, you can follow these steps:
 
 1. Install the Amazon Sagemaker Clarity Python library. You can do this by running the following command:
 
@@ -141,6 +175,3 @@ clarity = Clarity(model_name='<model_name>')`
 4. Visualize the explanations using the plot method. This will generate a bar chart that shows the relative contributions of each feature to the model's prediction.
 
 `clarity.plot(explanations)`
-
-5. Overall, using Amazon Sagemaker Clarity is a good way to make a machine learning model trained on AWS Sagemaker more interpretable. By following these steps, you can use the Amazon Sagemaker Clarity library to generate explanations for the model's predictions and visualize the contributions of different features to those predictions. This can help you understand how the
-
