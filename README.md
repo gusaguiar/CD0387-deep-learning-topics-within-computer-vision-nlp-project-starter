@@ -99,16 +99,16 @@ To query the endpoint of an image classification trained model on AWS Sagemaker 
                       
 3. Set the name of the endpoint that you want to query and the input data that you want to send to the endpoint. The input data should be a byte array that contains the image data, encoded in a format such as JPEG or PNG.
 
-`endpoint_name = '<endpoint_name>'
+<code> endpoint_name = '<endpoint_name>'
 
 with open('<image_path>', 'rb') as f:
-    input_data = f.read()`
+    input_data = f.read() <code>
     
 4. Call the invoke_endpoint method of the client, passing in the endpoint name and the input data. This will send the input data to the endpoint and return the model's prediction as a response.
 
-`response = client.invoke_endpoint(EndpointName=endpoint_name,
+<code> response = client.invoke_endpoint(EndpointName=endpoint_name,
                                   ContentType='application/x-image',
-                                  Body=input_data)`
+                                  Body=input_data) <code>
                                   
 5. Extract the model's prediction from the response. The prediction will be returned as a JSON object in the 'Body' field of the response.
 
@@ -164,9 +164,9 @@ Using Amazon Sagemaker Clarity is a good way to make a machine learning model tr
 
 2. Import the Amazon Sagemaker Clarity library and create a Clarity object. To do this, you will need to specify the name of the Amazon SageMaker model that you want to make more interpretable.
 
-`from sagemaker_clarity import Clarity
+<code> from sagemaker_clarity import Clarity
 
-clarity = Clarity(model_name='<model_name>')`
+clarity = Clarity(model_name='<model_name>') <code>
 
 3. Use the Clarity object to generate explanations for the model's predictions. You can do this by calling the explain method and specifying the input data that you want to explain. The explain method will return a list of explanations, each of which includes information about the features and values that contributed to the model's prediction.
 
