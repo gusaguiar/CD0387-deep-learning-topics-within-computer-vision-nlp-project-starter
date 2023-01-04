@@ -72,12 +72,12 @@ To perform and evaluate the results of model debugging and profiling in Sagemake
 5. Evaluate the results of the debugging and profiling by comparing the performance of the model before and after the debugging and profiling process. You can do this by measuring metrics such as accuracy, precision, and recall, and comparing these metrics to determine whether the debugging and profiling process has improved the model's performance.
 
 To perform debugging using Sagemaker Debugger, used the following steps.
-- Added hooks for the debugger and the profiler in the train() and test() functions and set them to their respective modes.
-- In the main() function created the hook and registered the model to the hook. This hook is passed to the train() and test() functions.
-- In the notebook, configured the debugger rules and the hook parameters.
+- Hooks for the debugger and profiler were added and set to their respective modes in the train() and test() functions.
+- The hook was created in the main() function, and the model was registered to it. The train() and test() functions are passed this hook.
+- Configure the debugger rules and hook parameters in the notebook.
 
 For the profiler, used the following steps.
-- Created profiler rules and config.
+- Profiler rules and configuration were created.
 
 
 ### Results
@@ -99,16 +99,20 @@ To query the endpoint of an image classification trained model on AWS Sagemaker 
                       
 3. Set the name of the endpoint that you want to query and the input data that you want to send to the endpoint. The input data should be a byte array that contains the image data, encoded in a format such as JPEG or PNG.
 
-<code> endpoint_name = '<endpoint_name>'
+```
+endpoint_name = '<endpoint_name>'
 
 with open('<image_path>', 'rb') as f:
-    input_data = f.read() <code>
+    input_data = f.read() 
+```
     
 4. Call the invoke_endpoint method of the client, passing in the endpoint name and the input data. This will send the input data to the endpoint and return the model's prediction as a response.
-
-<code> response = client.invoke_endpoint(EndpointName=endpoint_name,
+  
+```
+response = client.invoke_endpoint(EndpointName=endpoint_name,
                                   ContentType='application/x-image',
-                                  Body=input_data) <code>
+                                  Body=input_data)
+```
                                   
 5. Extract the model's prediction from the response. The prediction will be returned as a JSON object in the 'Body' field of the response.
 
@@ -120,7 +124,7 @@ with open('<image_path>', 'rb') as f:
 ## Standout Suggestions
 
 ### Package the model as a Docker Container
- packaging a model trained on AWS Sagemaker as a Docker container is a good way to make the model portable and easy to deploy to a variety of environments. By following these steps, you can create a Docker image that contains the model and all of the necessary dependencies, and then deploy the image to a production server or Kubernetes cluster for real-time inference.
+Packaging a model trained on AWS Sagemaker as a Docker container is a good way to make the model portable and easy to deploy to a variety of environments. By following these steps, you can create a Docker image that contains the model and all of the necessary dependencies, and then deploy the image to a production server or Kubernetes cluster for real-time inference.
 
 1. Install Docker on your local machine. You can download Docker from the official website (https://www.docker.com/) and follow the instructions to install it.
 
@@ -164,10 +168,12 @@ Using Amazon Sagemaker Clarity is a good way to make a machine learning model tr
 
 2. Import the Amazon Sagemaker Clarity library and create a Clarity object. To do this, you will need to specify the name of the Amazon SageMaker model that you want to make more interpretable.
 
-<code> from sagemaker_clarity import Clarity
+```
+from sagemaker_clarity import Clarity
 
-clarity = Clarity(model_name='<model_name>') <code>
-
+clarity = Clarity(model_name='<model_name>') 
+```
+  
 3. Use the Clarity object to generate explanations for the model's predictions. You can do this by calling the explain method and specifying the input data that you want to explain. The explain method will return a list of explanations, each of which includes information about the features and values that contributed to the model's prediction.
 
 `explanations = clarity.explain(input_data)`
